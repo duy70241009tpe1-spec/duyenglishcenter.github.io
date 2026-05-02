@@ -3,22 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siêu Ứng Dụng Học Tập - Pro Max</title>
+    <title>Siêu Ứng Dụng Học Tập - London Pro Max</title>
     <style>
         :root {
             --primary-color: #3498db; --secondary-color: #e74c3c; --bg-color: #f0f2f5;
             --en-color: #007bff; --cn-color: #e67e22; --success-color: #27ae60;
+            --glass-bg: rgba(255, 255, 255, 0.85);
         }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            /* CẬP NHẬT HÌNH NỀN TỪ ẢNH BẠN GỬI */
+            background: url('https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh;
+        }
         
-        .file-manager { background: #fff; padding: 15px; border-radius: 15px; width: 100%; max-width: 500px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        /* Hiệu ứng Glassmorphism cho các khung */
+        .file-manager, .container { 
+            background: var(--glass-bg) !important; 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .file-manager { padding: 15px; border-radius: 15px; width: 100%; max-width: 500px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .file-controls { display: flex; gap: 10px; align-items: center; }
         select#file-selector { flex-grow: 1; padding: 10px; border-radius: 8px; border: 2px solid #ddd; outline: none; font-weight: bold; }
         .file-btn { padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; }
         
-        .container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; display: none; margin-bottom: 20px; }
+        .container { padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 500px; display: none; margin-bottom: 20px; }
         .container.active { display: block; }
-        h2 { text-align: center; color: var(--primary-color); margin-top: 0; }
+        h2 { text-align: center; color: var(--primary-color); margin-top: 0; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); }
         
         .search-container { position: relative; width: 100%; margin-bottom: 10px; }
         .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 0 0 10px 10px; z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; max-height: 200px; overflow-y: auto; }
@@ -30,42 +45,25 @@
         .filter-btn.active { background: #333; color: white; border-color: #333; }
 
         .input-group { margin-bottom: 12px; }
-        label { font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; display: block; color: #555; }
-        input { width: 100%; padding: 10px; border: 2px solid #eee; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        label { font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; display: block; color: #333; }
+        input { width: 100%; padding: 10px; border: 2px solid #eee; border-radius: 8px; box-sizing: border-box; font-size: 1rem; background: rgba(255,255,255,0.9); }
         
-        /* Giao diện Checkbox mới cho từ loại */
-        .type-checkbox-group { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); 
-            gap: 6px; 
-            background: #fcfcfc; 
-            padding: 12px; 
-            border-radius: 10px; 
-            border: 1px dashed #ccc; 
-        }
-        .type-checkbox-group label { 
-            display: flex; 
-            align-items: center; 
-            gap: 4px; 
-            font-weight: 500; 
-            font-size: 0.7rem; 
-            cursor: pointer; 
-            margin: 0;
-            color: #444;
-        }
+        .type-checkbox-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 6px; background: rgba(255,255,255,0.5); padding: 12px; border-radius: 10px; border: 1px dashed #666; }
+        .type-checkbox-group label { display: flex; align-items: center; gap: 4px; font-weight: 500; font-size: 0.7rem; cursor: pointer; margin: 0; color: #000; }
         .type-checkbox-group input { width: auto; cursor: pointer; }
 
         .addBtn { width: 100%; padding: 12px; background-color: var(--primary-color); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .nav-tabs { display: flex; gap: 15px; margin-bottom: 20px; }
-        .tab-btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; color: white; opacity: 0.6; transition: 0.3s; }
-        .tab-btn.active { opacity: 1; transform: scale(1.1); }
+        .tab-btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; color: white; opacity: 0.7; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .tab-btn.active { opacity: 1; transform: scale(1.1); border: 2px solid white; }
 
-        .word-item { background: white; margin-bottom: 10px; padding: 15px 15px 15px 45px; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; border-left: 6px solid #ccc; transition: 0.3s; }
+        .word-item { background: white; margin-bottom: 10px; padding: 15px 15px 15px 45px; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; border-left: 6px solid #ccc; transition: 0.3s; }
         .select-item-check { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 18px !important; height: 18px; cursor: pointer; }
         
-        .action-btns { position: absolute; top: 10px; right: 10px; display: flex; gap: 10px; align-items: center; }
-        .status-btn, .mini-flash-btn { border: none; background: none; cursor: pointer; font-size: 1.1rem; padding: 0; transition: 0.2s; }
-        
+        .action-btns { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; align-items: center; }
+        .status-btn, .mini-flash-btn, .edit-word-btn { border: none; background: none; cursor: pointer; font-size: 1.1rem; padding: 2px; transition: 0.2s; }
+        .edit-word-btn:hover { transform: scale(1.2); }
+
         .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 5px; }
         .topic-tag { font-size: 0.65rem; background: #e8f0fe; color: #1a73e8; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
         .type-tag { font-size: 0.65rem; background: #fff1f0; color: #cf1322; padding: 1px 6px; border-radius: 4px; border: 1px solid #ffa39e; font-weight: bold; }
@@ -75,6 +73,7 @@
         .speak-icon:hover { filter: grayscale(0%); }
         .cn-char { font-size: 1.8rem; color: #333; margin: 5px 0; font-family: "Microsoft YaHei", sans-serif; }
 
+        /* Flashcard Area */
         .flashcard-area { perspective: 1000px; margin: 20px 0; display: none; position: relative; width: 100%; }
         .flashcard { width: 100%; height: 220px; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; position: relative; }
         .flashcard.flipped { transform: rotateY(180deg); }
@@ -85,7 +84,6 @@
     </style>
 </head>
 <body>
-
     <div class="file-manager">
         <label style="margin-bottom: 8px; font-size: 0.8rem; font-weight: bold;">📂 QUẢN LÝ FILE HỌC:</label>
         <div class="file-controls">
@@ -122,28 +120,25 @@
             </div>
             <button class="addBtn" style="background:#2d3436; margin-bottom:15px;" onclick="startBulkFlashcard('en')">🎴 Ôn tập mục "Đang học"</button>
             <div id="en-bulk-bar" class="bulk-delete-bar"><span id="en-count">0 mục</span><button onclick="bulkDelete('en')">Xóa mục chọn</button></div>
+            
             <div id="en-input-fields">
+                <input type="hidden" id="en-edit-id">
                 <div class="input-group"><label>Từ mới</label><input id="en-w"></div>
                 <div class="input-group">
                     <label>Từ tính (Word Class)</label>
                     <div class="type-checkbox-group" id="en-types">
-                        <label><input type="checkbox" value="n"> n</label>
-                        <label><input type="checkbox" value="v"> v</label>
-                        <label><input type="checkbox" value="adj"> adj</label>
-                        <label><input type="checkbox" value="adv"> adv</label>
-                        <label><input type="checkbox" value="prep"> prep</label>
-                        <label><input type="checkbox" value="conj"> conj</label>
-                        <label><input type="checkbox" value="pron"> pron</label>
-                        <label><input type="checkbox" value="det"> det</label>
-                        <label><input type="checkbox" value="idiom"> idiom</label>
-                        <label><input type="checkbox" value="phr"> phr</label>
+                        <label><input type="checkbox" value="n"> n</label><label><input type="checkbox" value="v"> v</label>
+                        <label><input type="checkbox" value="adj"> adj</label><label><input type="checkbox" value="adv"> adv</label>
+                        <label><input type="checkbox" value="prep"> prep</label><label><input type="checkbox" value="conj"> conj</label>
+                        <label><input type="checkbox" value="pron"> pron</label><label><input type="checkbox" value="det"> det</label>
+                        <label><input type="checkbox" value="idiom"> idiom</label><label><input type="checkbox" value="phr"> phr</label>
                     </div>
                 </div>
                 <div class="input-group"><label>IPA & Nghĩa</label>
                     <div style="display:flex; gap:5px"><input id="en-ipa" placeholder="IPA" style="width:40%"><input id="en-m" placeholder="Nghĩa" style="width:60%"></div>
                 </div>
                 <div class="input-group"><label>Topic</label><input id="en-t"></div>
-                <button class="addBtn" style="background:var(--en-color)" onclick="saveWord('en')">Lưu từ vựng</button>
+                <button class="addBtn" id="en-save-btn" style="background:var(--en-color)" onclick="saveWord('en')">Lưu từ vựng</button>
             </div>
             <div id="en-list" style="margin-top:20px"></div>
         </div>
@@ -171,28 +166,25 @@
             </div>
             <button class="addBtn" style="background:#2d3436; margin-bottom:15px;" onclick="startBulkFlashcard('cn')">🎴 Ôn tập mục "Đang học"</button>
             <div id="cn-bulk-bar" class="bulk-delete-bar"><span id="cn-count">0 mục</span><button onclick="bulkDelete('cn')">Xóa mục chọn</button></div>
+            
             <div id="cn-input-fields">
+                <input type="hidden" id="cn-edit-id">
                 <div class="input-group"><label>Hán tự</label><input id="cn-w"></div>
                 <div class="input-group">
                     <label>Từ tính (词性)</label>
                     <div class="type-checkbox-group" id="cn-types">
-                        <label><input type="checkbox" value="Danh"> Danh</label>
-                        <label><input type="checkbox" value="Động"> Động</label>
-                        <label><input type="checkbox" value="Tính"> Tính</label>
-                        <label><input type="checkbox" value="Phó"> Phó</label>
-                        <label><input type="checkbox" value="Lượng"> Lượng</label>
-                        <label><input type="checkbox" value="Đại"> Đại</label>
-                        <label><input type="checkbox" value="Giới"> Giới</label>
-                        <label><input type="checkbox" value="Liên"> Liên</label>
-                        <label><input type="checkbox" value="Trợ"> Trợ</label>
-                        <label><input type="checkbox" value="Số"> Số</label>
+                        <label><input type="checkbox" value="Danh"> Danh</label><label><input type="checkbox" value="Động"> Động</label>
+                        <label><input type="checkbox" value="Tính"> Tính</label><label><input type="checkbox" value="Phó"> Phó</label>
+                        <label><input type="checkbox" value="Lượng"> Lượng</label><label><input type="checkbox" value="Đại"> Đại</label>
+                        <label><input type="checkbox" value="Giới"> Giới</label><label><input type="checkbox" value="Liên"> Liên</label>
+                        <label><input type="checkbox" value="Trợ"> Trợ</label><label><input type="checkbox" value="Số"> Số</label>
                     </div>
                 </div>
                 <div class="input-group"><label>Pinyin & Nghĩa</label>
                     <div style="display:flex; gap:5px"><input id="cn-p" placeholder="Pinyin" style="width:40%"><input id="cn-m" placeholder="Nghĩa" style="width:60%"></div>
                 </div>
                 <div class="input-group"><label>Topic</label><input id="cn-t"></div>
-                <button class="addBtn" style="background:var(--cn-color)" onclick="saveWord('cn')">Lưu Hán tự</button>
+                <button class="addBtn" id="cn-save-btn" style="background:var(--cn-color)" onclick="saveWord('cn')">Lưu Hán tự</button>
             </div>
             <div id="cn-display-list" style="margin-top:20px"></div>
         </div>
@@ -208,6 +200,7 @@
             localStorage.setItem('APP_FILES', JSON.stringify(files));
             currentFileName = localStorage.getItem('CURRENT_FILE_NAME') || files[0];
             updateFileSelector();
+            renderAll();
         }
 
         function updateFileSelector() {
@@ -249,20 +242,55 @@
             const m = document.getElementById(`${lang}-m`).value;
             const t = document.getElementById(`${lang}-t`).value || 'Chung';
             const extra = lang === 'en' ? document.getElementById('en-ipa').value : document.getElementById('cn-p').value;
+            const editId = document.getElementById(`${lang}-edit-id`).value;
             const typeCheckboxes = document.querySelectorAll(`#${lang}-types input:checked`);
             const types = Array.from(typeCheckboxes).map(cb => cb.value);
 
             if(!w || !m) return alert("Vui lòng điền đủ từ và nghĩa!");
             const key = `${currentFileName}_${lang.toUpperCase()}`;
-            const data = JSON.parse(localStorage.getItem(key)) || [];
-            data.push({w, m, t, extra, types, id: Date.now(), isLearned: false});
+            let data = JSON.parse(localStorage.getItem(key)) || [];
+
+            if (editId) {
+                // Chế độ Cập nhật
+                data = data.map(item => item.id == editId ? {...item, w, m, t, extra, types} : item);
+                document.getElementById(`${lang}-edit-id`).value = "";
+                document.getElementById(`${lang}-save-btn`).innerText = lang === 'en' ? "Lưu từ vựng" : "Lưu Hán tự";
+            } else {
+                // Chế độ Thêm mới
+                data.push({w, m, t, extra, types, id: Date.now(), isLearned: false});
+            }
+
             localStorage.setItem(key, JSON.stringify(data));
             renderAll();
+            
+            // Clear fields
             document.getElementById(`${lang}-w`).value = '';
             document.getElementById(`${lang}-m`).value = '';
             document.getElementById(`${lang}-t`).value = '';
             if(lang==='en') document.getElementById('en-ipa').value = ''; else document.getElementById('cn-p').value = '';
             typeCheckboxes.forEach(cb => cb.checked = false);
+        }
+
+        function editWord(lang, id) {
+            const key = `${currentFileName}_${lang.toUpperCase()}`;
+            const data = JSON.parse(localStorage.getItem(key)) || [];
+            const item = data.find(i => i.id == id);
+            if (!item) return;
+
+            document.getElementById(`${lang}-w`).value = item.w;
+            document.getElementById(`${lang}-m`).value = item.m;
+            document.getElementById(`${lang}-t`).value = item.t;
+            if(lang==='en') document.getElementById('en-ipa').value = item.extra; 
+            else document.getElementById('cn-p').value = item.extra;
+            
+            // Điền checkbox
+            document.querySelectorAll(`#${lang}-types input`).forEach(cb => {
+                cb.checked = item.types.includes(cb.value);
+            });
+
+            document.getElementById(`${lang}-edit-id`).value = id;
+            document.getElementById(`${lang}-save-btn`).innerText = "Cập nhật thay đổi";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function renderAll() {
@@ -271,15 +299,19 @@
                 const listId = lang === 'en' ? 'en-list' : 'cn-display-list';
                 const searchVal = document.getElementById(`${lang}-search`).value.toLowerCase();
                 let data = JSON.parse(localStorage.getItem(key)) || [];
+                
                 if(currentFilters[lang] === 'learning') data = data.filter(i => !i.isLearned);
                 if(currentFilters[lang] === 'learned') data = data.filter(i => i.isLearned);
+                
                 const filtered = data.filter(i => i.w.toLowerCase().includes(searchVal) || i.t.toLowerCase().includes(searchVal)).reverse();
+                
                 document.getElementById(listId).innerHTML = filtered.map(i => {
                     const typeHtml = (i.types || []).map(t => `<span class="type-tag">${t}</span>`).join('');
                     return `
                     <div class="word-item" style="border-left-color:${lang==='en'?'var(--en-color)':'var(--cn-color)'}; opacity: ${i.isLearned ? 0.7 : 1}">
                         <input type="checkbox" class="select-item-check ${lang}-item-cb" value="${i.id}" onchange="updateBulkBar('${lang}')">
                         <div class="action-btns">
+                            <button class="edit-word-btn" onclick="editWord('${lang}', ${i.id})" title="Sửa từ">📝</button>
                             <button class="mini-flash-btn" onclick="startSingleFlashcard('${lang}', ${i.id})" title="Học từ này">🎴</button>
                             <button class="status-btn" onclick="toggleStatus('${lang}', ${i.id})">${i.isLearned ? '✅' : '⏳'}</button>
                         </div>
@@ -353,6 +385,7 @@
             } else suggestBox.style.display = 'none';
         }
         function applyFilter(lang, topic) { document.getElementById(`${lang}-search`).value = topic; document.getElementById(`${lang}-suggestions`).style.display = 'none'; renderAll(); }
+        
         function openTab(evt, name) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
@@ -360,6 +393,7 @@
             evt.currentTarget.classList.add('active');
             closeFlashcard('en'); closeFlashcard('cn');
         }
+
         function setFilter(lang, type) {
             currentFilters[lang] = type;
             const parent = lang === 'en' ? 'english' : 'chinese';
@@ -367,12 +401,14 @@
             event.target.classList.add('active');
             renderAll();
         }
+
         function updateBulkBar(lang) {
             const checked = document.querySelectorAll(`.${lang}-item-cb:checked`);
             const bar = document.getElementById(`${lang}-bulk-bar`);
             bar.style.display = checked.length > 0 ? 'flex' : 'none';
             if(checked.length > 0) document.getElementById(`${lang}-count`).innerText = `${checked.length} mục chọn`;
         }
+
         function bulkDelete(lang) {
             if(!confirm("Xóa các từ đã chọn?")) return;
             const key = `${currentFileName}_${lang.toUpperCase()}`;
@@ -382,7 +418,8 @@
             localStorage.setItem(key, JSON.stringify(data));
             renderAll();
         }
-        window.onload = () => { initFiles(); renderAll(); };
+
+        window.onload = () => { initFiles(); };
     </script>
 </body>
 </html>
